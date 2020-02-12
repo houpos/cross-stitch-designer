@@ -18,34 +18,78 @@ import { Grid, Button } from '@material-ui/core'
     return html
   }
 
-function generatePDF(details, grid, colors) {
-  console.log('details', grid)
-  let newGrid = `<div id="grid"><div class="row"><div class="cell" style="background-color: rgb(148, 91, 128);"></div></div></div>`
-  return axios.get(`http://localhost:8080/api/pdf`, {
-    responseType: 'arraybuffer',
-    headers: {
-      Accept: 'application/pdf'
+function generatePDF(details) {
+  // console.log('details', grid)
+  // let newGrid = `<div id="grid"><div class="row"><div class="cell" style="background-color: rgb(148, 91, 128);"></div></div></div>`
+  fetch('/api/invoices/create-pdf', {
+    data: {
+      details
     },
-    params: {
-      details,
-      grid: newGrid,
-      colors
-    }
+    method: 'POST'
+  }).then(res => {
+    return res
+      .arrayBuffer()
+      .then(response => {
+         const blob = new Blob([response.data], { type: 'application/pdf' })
+         const link = document.createElement('a')
+         link.href = window.URL.createObjectURL(blob)
+         link.download = `your-file-name.pdf`
+         link.click()
+        // const blob = new Blob([res], { type: 'application/pdf' })
+        // saveAs(blob, 'invoice.pdf')
+      })
+      .catch(e => console.error(e))
   })
+  // return axios.get(`http://localhost:8080/api/pdf`, {
+  //   responseType: 'arraybuffer',
+  //   headers: {
+  //     Accept: 'application/pdf'
+  //   },
+  //   params: {
+  //     details,
+  //   }
+  // })
 }
 
 export function savePDF(details) {
-  const grid = document.getElementById('grid')
+  fetch('http://localhost:8080/api/pdf', {
+    body: JSON.stringify(details),
+    headers: {"Content-Type": "application/json"},
+    method: 'POST'
+  }).then(res => {
+    return res
+      .arrayBuffer()
+      .then(response => {
+        const blob = new Blob([response.data], { type: 'application/pdf' })
+        const link = document.createElement('a')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = `your-file-name.pdf`
+        link.click()
+        // const blob = new Blob([res], { type: 'application/pdf' })
+        // saveAs(blob, 'invoice.pdf')
+      })
+      .catch(e => console.error(e))
+  })
+  // return axios.get(`http://localhost:8080/api/pdf`, {
+  //   responseType: 'arraybuffer',
+  //   headers: {
+  //     Accept: 'application/pdf'
+  //   },
+  //   params: {
+  //     details,
+  //   }
+  // })
+  // const grid = document.getElementById('grid')
 
-  return generatePDF(generateDetails(details), grid, generateColorHTML(details.allColors, details.colorCount)) // API call
-    .then(response => {
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      const link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = `your-file-name.pdf`
-      link.click()
-    })
-    .catch(err => console.error(err))
+  // return generatePDF(details) // API call
+  //   .then(response => {
+  //     const blob = new Blob([response.data], { type: 'application/pdf' })
+  //     const link = document.createElement('a')
+  //     link.href = window.URL.createObjectURL(blob)
+  //     link.download = `your-file-name.pdf`
+  //     link.click()
+  //   })
+  //   .catch(err => console.error(err))
 }
 
 const PDFGenerator = props => {
