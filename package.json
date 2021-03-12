@@ -17,7 +17,7 @@
     "dom-to-image": "^2.6.0",
     "express": "^4.17.1",
     "html2canvas": "^1.0.0-rc.5",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "material-ui-icons": "^1.0.0-beta.36",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
